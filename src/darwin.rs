@@ -1,21 +1,14 @@
 use crate::{DisplayInfo, Image};
 use anyhow::{anyhow, Result};
 use core_graphics::{
-  display::{
-    kCGNullWindowID, kCGWindowImageDefault, kCGWindowListOptionOnScreenOnly, CGDisplay, CGRect,
-  },
+  display::{CGDisplay, CGRect},
   geometry::{CGPoint, CGSize},
 };
 
 fn capture(rect: CGRect, display: CGDisplay) -> Result<Image> {
-  display.hide_cursor().unwrap_or_default(); // hide mouse cursor
-  let cg_image = CGDisplay::screenshot(
-    rect,
-    kCGWindowListOptionOnScreenOnly,
-    kCGNullWindowID,
-    kCGWindowImageDefault,
-  )
-  .ok_or_else(|| anyhow!("Screen:{} screenshot failed", display.id))?;
+  let cg_image = display
+    .image_for_rect(rect)
+    .ok_or_else(|| anyhow!("Screen:{} screenshot failed", display.id))?;
 
   let image = Image::from_bgra(
     Vec::from(cg_image.data().bytes()),
@@ -23,7 +16,6 @@ fn capture(rect: CGRect, display: CGDisplay) -> Result<Image> {
     cg_image.height() as u32,
     cg_image.bytes_per_row(),
   )?;
-  display.show_cursor().unwrap_or_default(); // show mouse cursor
   Ok(image)
 }
 
