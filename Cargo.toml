@@ -16,7 +16,7 @@ display-info = "0.4.1"
 anyhow = "1.0.70"
 
 [target.'cfg(target_os="macos")'.dependencies]
-core-graphics = { git = "https://github.com/mtfcd/core-foundation-rs" }
+core-graphics = "0.23.1"
 
 [target.'cfg(target_os="windows")'.dependencies]
 fxhash = "0.2.1"
